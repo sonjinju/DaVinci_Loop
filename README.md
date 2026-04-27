@@ -71,3 +71,68 @@ project/
          ├─ main.js
          ├─ mainStyles.js
          └─ SeedVault.js
+
+🚀 Getting Started
+1) Backend
+cd backend
+npm install
+node server.js
+2) Frontend
+cd frontend
+npm install
+npm start
+3) Ollama (선택)
+ollama pull llama3.1:8b
+backend/.env 예시:
+
+OLLAMA_URL=http://localhost:11434/api/generate
+OLLAMA_MODEL=llama3.1:8b
+🔌 API Overview
+Domain	Method	Endpoint	Description
+Auth
+POST
+/auth/signup
+회원가입
+Auth
+POST
+/auth/login
+로그인 + JWT
+Ideas
+GET
+/ideas
+아이디어 목록
+Ideas
+POST
+/ideas
+아이디어 생성
+Ideas
+PATCH
+/ideas/:id/reflect
+회고 메모 저장
+Ideas
+DELETE
+/ideas/:id
+아이디어 소프트 삭제
+Ideas
+PATCH
+/ideas/:id/restore
+아이디어 복구
+Ideas
+GET
+/ideas/seeds
+씨앗 보관함 조회
+AI
+POST
+/ideas/:id/reflect-prompts
+회고 질문 생성
+AI
+GET
+/ideas/:id/similar
+유사 아이디어 추천
+🧩 Troubleshooting Highlights
+인증 로직 분산 → authMiddleware 일원화
+레거시 컬럼 차이 → fallback 쿼리 체인 적용
+물리 삭제 충돌 → 소프트 삭제 + 복구 API 도입
+잠금 UI 타이밍 불일치 → 로컬 잠금맵 + 재조회 동기화
+Ollama 지연/무응답 → local fallback으로 연속 응답 보장
+추천 품질 편차 → 코사인 기반 운영 + 임베딩 고도화 계획
