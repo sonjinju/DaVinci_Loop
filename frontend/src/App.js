@@ -13,10 +13,7 @@ import SeedVault from "./pages/SeedVault";
 const AUTH_VIEW_SESSION_KEY = "davinci_app_view";
 
 function readInitialAuthView() {
-  if (!localStorage.getItem("token")) return "login";
-  const saved = sessionStorage.getItem(AUTH_VIEW_SESSION_KEY);
-  if (saved === "seedVault") return "seedVault";
-  return "main";
+  return "login";
 }
 
 function App() {
