@@ -76,14 +76,14 @@ project/
 🚀 Getting Started
 
 1) Backend
-cd backend
-npm install
-node server.js
+- cd backend
+- npm install
+- node server.js
 
 2) Frontend
-cd frontend
-npm install
-npm start
+- cd frontend
+- npm install
+- npm start
 
 3) Ollama (선택)
-ollama pull llama3.1:8b
+- ollama pull llama3.1:8b
