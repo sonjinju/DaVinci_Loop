@@ -1,5 +1,6 @@
 /**
  * 인증 라우트: 회원가입(INSERT) / 로그인(SELECT + JWT).
+ * API 엔드포인트.
  */
 import express from "express";
 import bcrypt from "bcrypt";

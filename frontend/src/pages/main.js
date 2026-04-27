@@ -35,6 +35,12 @@ function Main({ onOpenSeedVault, onLogout }) {
   const [selectedIdeaId, setSelectedIdeaId] = useState(null);
   const [reflection, setReflection] = useState("");
   const [isReflectSaving, setIsReflectSaving] = useState(false);
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const [aiTargetIdea, setAiTargetIdea] = useState(null);
+  const [aiPrompts, setAiPrompts] = useState([]);
+  const [aiSimilarIdeas, setAiSimilarIdeas] = useState([]);
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [aiSource, setAiSource] = useState("");
 
   // --- 삭제: 확인 → 키워드 → 결과 (버튼은 “다시보고 생각하기” 옆에만 배치) ---
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -195,6 +201,56 @@ function Main({ onOpenSeedVault, onLogout }) {
     setIsReflectModalOpen(false);
     setSelectedIdeaId(null);
     setReflection("");
+  };
+
+  const closeAiModal = () => {
+    setIsAiModalOpen(false);
+    setAiTargetIdea(null);
+    setAiPrompts([]);
+    setAiSimilarIdeas([]);
+    setAiSource("");
+  };
+
+  const openAiAssistModal = async (idea) => {
+    if (!token) return;
+    setIsAiLoading(true);
+    setIsAiModalOpen(true);
+    setAiTargetIdea(idea);
+    setAiPrompts([]);
+    setAiSimilarIdeas([]);
+    setAiSource("");
+
+    try {
+      const [similarRes, promptsRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/ideas/${idea.id}/similar?limit=3`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        fetch(`${API_BASE_URL}/ideas/${idea.id}/reflect-prompts`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` }
+        })
+      ]);
+
+      const similarData = await similarRes.json();
+      const promptsData = await promptsRes.json();
+
+      if (!similarRes.ok) {
+        setMessage(similarData?.message || "유사 아이디어를 불러오지 못했습니다.");
+      } else {
+        setAiSimilarIdeas(similarData?.similarIdeas || []);
+      }
+
+      if (!promptsRes.ok) {
+        setMessage(promptsData?.message || "AI 질문 생성에 실패했습니다.");
+      } else {
+        setAiPrompts(promptsData?.prompts || []);
+        setAiSource(promptsData?.source || "");
+      }
+    } catch (_error) {
+      setMessage("AI 기능 호출 중 오류가 발생했습니다.");
+    } finally {
+      setIsAiLoading(false);
+    }
   };
 
   /** PATCH /ideas/:id/reflect: 본문에 메모 누적 + 다시 1분 잠금 */
@@ -371,6 +427,16 @@ function Main({ onOpenSeedVault, onLogout }) {
         <button
           type="button"
           disabled={!isUnlocked(idea.lockedUntil, now)}
+          onClick={() => openAiAssistModal(idea)}
+          style={
+            isUnlocked(idea.lockedUntil, now) ? styles.aiAssistButton : styles.aiAssistButtonDisabled
+          }
+        >
+          AI 확장하기
+        </button>
+        <button
+          type="button"
+          disabled={!isUnlocked(idea.lockedUntil, now)}
           onClick={() => openReflectModal(idea.id)}
           style={
             isUnlocked(idea.lockedUntil, now) ? styles.rethinkButton : styles.lockedButton
@@ -509,6 +575,59 @@ function Main({ onOpenSeedVault, onLogout }) {
                 style={styles.modalSaveButton}
               >
                 {isReflectSaving ? "저장 중..." : "사유 저장"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+      {isAiModalOpen ? (
+        <div style={styles.modalBackdrop}>
+          <div style={styles.modalBox}>
+            <h4 style={styles.modalTitle}>
+              {aiTargetIdea?.title || "(제목 없음)"}의 AI 확장 제안
+            </h4>
+            {isAiLoading ? (
+              <p style={styles.aiLoadingText}>AI 인사이트를 준비 중입니다...</p>
+            ) : (
+              <>
+                <div style={styles.aiSection}>
+                  <p style={styles.aiSectionTitle}>회고 질문 추천</p>
+                  {aiPrompts.length === 0 ? (
+                    <p style={styles.aiEmptyText}>생성된 질문이 없습니다.</p>
+                  ) : (
+                    <ul style={styles.aiList}>
+                      {aiPrompts.map((prompt, index) => (
+                        <li key={`${prompt}-${index}`} style={styles.aiListItem}>
+                          {prompt}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {aiSource ? (
+                    <p style={styles.aiSourceText}>
+                      생성 방식: {aiSource === "ollama" ? "Ollama" : "로컬 fallback"}
+                    </p>
+                  ) : null}
+                </div>
+                <div style={styles.aiSection}>
+                  <p style={styles.aiSectionTitle}>유사 아이디어</p>
+                  {aiSimilarIdeas.length === 0 ? (
+                    <p style={styles.aiEmptyText}>유사 아이디어가 없습니다.</p>
+                  ) : (
+                    <ul style={styles.aiList}>
+                      {aiSimilarIdeas.map((similarIdea) => (
+                        <li key={similarIdea.id} style={styles.aiListItem}>
+                          <strong>{similarIdea.title || "(제목 없음)"}</strong>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </>
+            )}
+            <div style={styles.modalActions}>
+              <button type="button" onClick={closeAiModal} style={styles.modalSaveButton}>
+                닫기
               </button>
             </div>
           </div>

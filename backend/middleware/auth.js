@@ -1,3 +1,7 @@
+/** 인증 미들웨어 : JWT 토큰 검증 
+ * 토큰 로직은 jwt.js에 모아두고, 실제 요청 검사는 auth.js에서 사용하는 구조
+*/
+
 import { verifyToken } from "../utils/jwt.js";
 
 /**
@@ -29,3 +33,4 @@ const authMiddleware = (req, res, next) => {
 };
 
 export default authMiddleware;
+

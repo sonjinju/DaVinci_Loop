@@ -270,6 +270,29 @@ const styles = {
     letterSpacing: "0.03em",
     boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12)"
   },
+  aiAssistButton: {
+    marginTop: "10px",
+    flex: "0 0 120px",
+    height: "38px",
+    border: "1px solid #355272",
+    borderRadius: "3px",
+    background: "linear-gradient(180deg, #57789c 0%, #3f5f82 55%, #334f70 100%)",
+    color: "#f0f5fb",
+    cursor: "pointer",
+    fontWeight: 600,
+    fontFamily: "Georgia, serif",
+    fontSize: "13px",
+    letterSpacing: "0.02em",
+    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.16)"
+  },
+  aiAssistButtonDisabled: {
+    opacity: 0.55,
+    cursor: "not-allowed",
+    background: "linear-gradient(180deg, #e0d8cc 0%, #cfc4b4 100%)",
+    border: "1px solid #b5a896",
+    color: "#6b5f52",
+    boxShadow: "none"
+  },
   actionRow: {
     display: "flex",
     gap: "8px",
@@ -385,6 +408,48 @@ const styles = {
     cursor: "pointer",
     fontWeight: 600,
     fontFamily: "Georgia, serif"
+  },
+  aiLoadingText: {
+    margin: 0,
+    color: "#4d5f75",
+    fontSize: "14px"
+  },
+  aiSection: {
+    border: "1px solid #c7b9a4",
+    borderRadius: "4px",
+    padding: "10px",
+    background: "#fffdf8"
+  },
+  aiSectionTitle: {
+    margin: "0 0 8px 0",
+    fontWeight: 700,
+    color: "#2b2418"
+  },
+  aiEmptyText: {
+    margin: 0,
+    color: "#6a5d4c",
+    fontSize: "13px"
+  },
+  aiList: {
+    margin: 0,
+    paddingLeft: "18px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px"
+  },
+  aiListItem: {
+    color: "#2f271c",
+    lineHeight: 1.5
+  },
+  aiSourceText: {
+    margin: "8px 0 0 0",
+    color: "#6a5d4c",
+    fontSize: "12px"
+  },
+  aiScoreText: {
+    marginLeft: "8px",
+    color: "#5a6f88",
+    fontSize: "12px"
   },
   emptyItem: {
     color: "#7a6b5c",
